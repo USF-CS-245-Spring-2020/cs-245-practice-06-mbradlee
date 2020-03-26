@@ -1,103 +1,109 @@
-public class LinkedList<T>{
+import java.util.NoSuchElementException;
+
+public class LinkedList<T> implements List<T>{
 
     protected Node head;
-    protected int size;
+    protected int items;
 
     /**
      * LinkedList constructor
      */
     public LinkedList(){
-        size = 0;
+        items = 0;
         head = null;
-    }
-
-    public void add(int pos, T data){
-        if(pos > size || pos < 0){
-            throw new IndexOutOfBoundsException();
-        }
-        //case 1: head, head == null
-        //case 2: head
-        //case 3: tail
-        //case 4: everything else
-        if(pos == 0 && head == null){
-            Node curr = new Node(data);
-            head = curr;
-            size++;
-        }else if(pos == 0){
-            Node curr = new Node(data);
-            curr.next = head;
-            head = curr;
-            size++;
-        }else if(pos == size){
-            Node prev = head;
-            for(int i = 0; i < size; i++){
-                prev = prev.next;
-            }
-            prev.next = new Node(data);
-            size++;
-        }else{
-            Node prev = head;
-            for(int i = 0; i < pos; i++){
-                prev = prev.next;
-            }
-            prev.next = new Node(data);
-            size++;
-        }
     }
 
     public void add(T data){
         if(head == null){
             Node curr = new Node(data);
             head = curr;
-            size++;
+            items++;
         }else{
             Node prev = head;
-            while(prev.next != null){
+            for(int i = 0; i < items; i++){
                 prev = prev.next;
             }
-            prev.next = new Node(data);
-            size++;
+            Node add = new Node(data);
+            prev.next = add;
+            items++;
         }
     }
 
-    public T remove(int pos){
-        if(pos > size || pos < 0){
+    public void add(int pos, T data){
+        if(pos < 0){
             throw new IndexOutOfBoundsException();
         }
-        //case 1: head
-        //case 2: everything else
-        if(pos == 0){
-            Node prev = head;
-            head = prev.next;
-            prev.next = null;
-            size--;
-            return prev.data; //how??
+        if(pos == 0 && head == null){
+            Node curr = new Node(data);
+            head = curr;
+            items++;
+        }else if(pos == 0){
+            Node curr = new Node(data);
+            curr.next = head;
+            head = curr;
+            items++;
         }else{
             Node prev = head;
             for(int i = 0; i < pos - 1; i++){
                 prev = prev.next;
             }
-            Node ret = prev.next;
-            prev.next = ret.next;
-            size--;
-            return ret.data; //HOW??????
+            Node curr = new Node(data);
+            curr.next = prev.next;
+            prev.next = curr;
+            items++;
         }
+
+        //tail case?
     }
 
     public T get(int pos){
-        if(pos > size || pos < 0){
+        if(pos < 0 || pos > items){
             throw new IndexOutOfBoundsException();
+        }
+
+        if(head == null){
+            throw new NoSuchElementException();
         }
 
         Node curr = head;
         for(int i = 0; i < pos; i++){
             curr = curr.next;
         }
-        return curr.data;
+
+        return (T)curr.data;
+    }
+
+    public T remove(int pos) {
+        if(pos < 0 || pos > items){
+            throw new IndexOutOfBoundsException();
+        }
+
+        if(head == null){
+            throw new NoSuchElementException();
+        }
+
+        if(pos == 0){
+            Node curr = head;
+            head = curr.next;
+            items--;
+            return (T)curr.data;
+        }else{
+            Node curr = head;
+            for(int i = 0; i < pos - 1; i++){
+                curr = curr.next;
+            }
+
+            Node rem = curr.next;
+            curr.next = rem.next;
+
+            items--;
+
+            return (T)rem.data;
+        }
     }
 
     public int size(){
-        return size;
+        return items;
     }
-    
+
 }

@@ -1,83 +1,108 @@
 import java.lang.reflect.Array;
 
-public class ArrayList<T>{
+public class ArrayList<T> implements List<T>{
 
     protected Class<T> type;
     protected T[] array;
-    protected int size;
+    protected int items;
+
+    /**
+     * Generic constructor with no parameters
+     * Creates an array of type T[] of size 10
+     * Initializes num of items to 0
+     */
+
+    public ArrayList(){
+        items = 0;
+        array = (T[])new Object[10];
+    }
+
+    /**
+     * Secondary constructor for ArrayList
+     * Will create an ArrayList of given size and type
+     * @param typeInit initial type given
+     * @param sizeInit initial size given
+     */
 
     public ArrayList(Class<T> typeInit, int sizeInit){
         type = typeInit;
-        size = sizeInit;
-        array = (T[])Array.newInstance(type, size);
+        items = sizeInit;
+        array = (T[])Array.newInstance(type, items);
+    }
+
+    /**
+     * Add fucntion will add a given item to the next available spot
+     * in the ArrayList (array[items]). If there is no room in the
+     * ArrayList (items == array.length) the array size will be doubled
+     * @param data given item T to be added
+     * @return void
+     */
+
+    public void add(T data){
+        if(items == array.length){
+            double_array();
+        }
+
+        for(int i = array.length - 1; i > items; i--){
+            array[i] = array[i-1];
+        }
+        array[items] = data;
+        items++;
     }
 
     public void add(int pos, T data){
-        if(size == array.length){
-            double_array();
-            for(int i = size - 1; i > pos; i--){
-                array[i] = array [i-1];
-            }
-            array[pos] = data;
-            size++;
-        }else{
-            for(int i = size - 1; i > pos; i--){
-                array[i] = array [i-1];
-            }
-            array[pos] = data;
-            size++;
-        }
-    }
-
-    public void add(T data){
-        if(size == array.length){
-            int oldSize = size;
-            double_array();
-            for(int i = size - 1; i > oldSize; i--){
-                array[i] = array [i-1];
-            }
-            array[oldSize + 1] = data;
-            size++;
-        }else{
-            //how do you know where the end of the array is? (Where the last number is in current arr size.)
-        }
-    }
-
-    public T remove(int pos){
-        if(pos < 0 || pos > size - 1){
+        if(pos < 0 || pos > items){
             throw new IndexOutOfBoundsException();
         }
 
-        if(pos == size - 1){
-            size--;
-        }else{
-            for(int i = pos; i < size - 1; i++){
-                array[i] = array[i+1];
-            }
-            size--;
+        if(items == array.length){
+            double_array();
         }
-        return array[pos];
+
+        for(int i = array.length - 1; i > pos; i--){
+            array[i] = array[i-1];
+        }
+        array[pos] = data;
+        items++;
+
     }
 
     public T get(int pos){
-        if(pos < 0 || pos > size - 1){
+        if(pos < 0 || pos > items){
             throw new IndexOutOfBoundsException();
         }
 
         return array[pos];
     }
 
+    public T remove(int pos){
+
+        T ret = array[pos];
+
+        if(pos < 0 || pos > items){
+            throw new IndexOutOfBoundsException();
+        }
+
+        if(items == pos){
+            items--;
+        }else{
+            for(int i = array.length - 1; i > pos; i--){
+                array[i] = array[i-1];
+            }
+            items--;
+        }
+        return ret;
+    }
+
     public int size(){
-        return size;
+        return items;
     }
 
     protected void double_array(){
         T[] tempArray;
-        size *= 2;
+        tempArray = (T[])new Object[array.length*2];
 
-        tempArray = (T[])Array.newInstance(type, size);
-
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < array.length; i++){
             tempArray[i] = array[i];
         }
 
